@@ -1,5 +1,5 @@
 import requests
-from colorama import Fore, Back, Style
+from colorama import Style
 from utils import buildBasicHeaders, printFormattedInfo
 distribution = input("please, specify a distribution (ubuntu|debian)")
 url = f"https://api.digitalocean.com/v2/images?type=distribution"

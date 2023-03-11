@@ -1,5 +1,5 @@
 import requests
-from colorama import Fore, Back, Style
+from colorama import Style
 from utils import buildBasicHeaders, printFormattedInfo
 
 url = "https://api.digitalocean.com/v2/sizes"
