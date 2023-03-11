@@ -2,11 +2,15 @@ import requests
 from colorama import Style
 from utils import buildBasicHeaders, printFormattedInfo
 
-url = "https://api.digitalocean.com/v2/sizes"
-headers = buildBasicHeaders()
 
-response = requests.get(url,headers=headers)
+def getSizes():
+  url = "https://api.digitalocean.com/v2/sizes"
+  headers = buildBasicHeaders()
+  response = requests.get(url,headers=headers)
+  return response.json()['sizes']
 
+
+''' 
 #print(response.json()['sizes'])
 for size in response.json()['sizes']:
   printFormattedInfo(size, 'slug')
@@ -18,4 +22,4 @@ for size in response.json()['sizes']:
   print('\n\n')
  
   
-print(Style.RESET_ALL)
+print(Style.RESET_ALL) '''
