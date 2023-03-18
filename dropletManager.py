@@ -1,18 +1,21 @@
 import requests
 from utils import buildBasicHeaders, printFormattedInfo
 from colorama import Style
-
+import yaml
 
 #print(response.json())
 
 def createDroplet(name, size, image):
   headers = buildBasicHeaders()
   get_droplets_url = "https://api.digitalocean.com/v2/droplets"
+  configs = yaml.safe_load(open('./env.yaml'))
+  keys = configs['configs']['sshKeys']
+  
   data = {
     'name':name,
     'size':size,
     'image':int(image),
-    'ssh_keys': [25525079]
+    'ssh_keys': keys
   }
   #print(data)
   response = requests.post(get_droplets_url, headers=headers,json=data)

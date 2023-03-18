@@ -10,5 +10,4 @@ In order to get this tool running, you will need some config.
 #### Now add the SSH key
 You can either use an already exsisting key or creating a new one.
 To add a new ssh key from your computer to ssh you can go [here](https://cloud.digitalocean.com/account/security?i=75bc4f)
-
-after adding it you can retrive it launching the ssh-keys.py script. You will need yout key ID later on
+after adding it copy the fingerprint and add it to sshKeys in your .env file. This will allow the script to access the ssh and configure your server
