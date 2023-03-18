@@ -11,3 +11,16 @@ In order to get this tool running, you will need some config.
 You can either use an already exsisting key or creating a new one.
 To add a new ssh key from your computer to ssh you can go [here](https://cloud.digitalocean.com/account/security?i=75bc4f)
 after adding it copy the fingerprint and add it to sshKeys in your .env file. This will allow the script to access the ssh and configure your server
+
+#### Adding git credential to your env file
+In order to clone your git repositories you will need your username and token in your env file or directly prompted during server setup. Either if you want to put it in your  env file or ask for it during setup. you will need a github token in order to cone it.
+You can get one by going [here](https://github.com/settings/tokens), or guided step by step: 
+1. open [Github](https://github.com/)
+2. click on your profile image on top right corner
+3. Select "**Settings**"
+4. Select "**Developer Settings**"
+5. Go to Personal Access tokens > tokens
+6. Generate new token
+7. Choose an expiration date and check all the repo checkbokes
+8. give it a name and copy your new token
+

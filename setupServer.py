@@ -7,11 +7,13 @@ import webbrowser
 #myModules
 
 import dropletManager
+
+from createWebsite import createWebsite
 questions = [
   inquirer.Text('machineName', message="Pick a name for your machine"),  
 ]
 
-path = os.path.expanduser('~')+'/.ssh/id_rsa_do'
+
 answers = inquirer.prompt(questions)
 machineName = answers['machineName']
 
@@ -78,7 +80,8 @@ print('finish wait start connect')
 ssh = paramiko.SSHClient()
 ssh.load_system_host_keys()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ip = newDroplet['networks']['v4'][0]['ip_address']         
+ip = newDroplet['networks']['v4'][0]['ip_address']
+path = os.path.expanduser('~')+'/.ssh/id_rsa_do'         
 ssh.connect(ip, username='root',key_filename=path)
 
 print('Connected to the server')
@@ -98,6 +101,7 @@ for command in commands:
   
 ssh_stdin.close()
 
+createWebsite(ip)
 print(f"New machine is at IP: {ip}")
 webbrowser.open(f'http://{ip}')
 os.system(f"ssh -o StrictHostKeyChecking=no root@{ip}")
