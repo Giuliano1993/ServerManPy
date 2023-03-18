@@ -16,4 +16,4 @@ def createDroplet(name, size, image):
   }
   #print(data)
   response = requests.post(get_droplets_url, headers=headers,json=data)
-  return response.json()
+  return response.json()['droplet']
