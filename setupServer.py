@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # python modules
 import os
 import inquirer
@@ -64,19 +65,21 @@ index = dropletImage[1:idChiusura]
 dropletImage = int(images[int(index)-1]['id'])
 
 newDroplet  = dropletManager.createDroplet(machineName,dropletSize,dropletImage)
-print(newDroplet)
+
 
 newDroplet = dropletManager.getDroplet(newDroplet['id'])
-print('Waiting for the droplet to be ready')
+print('[*] Creating the droplet... ', end='', flush=True)
 while newDroplet['status'] != 'active' :
   newDroplet = dropletManager.getDroplet(newDroplet['id'])
-  print('.')
+  #print('.')
   time.sleep(1)
   
-print('start to wait')
+print('OK')
+print('[*] Powering the new droplet on...', end='', flush=True)
 time.sleep(60)  
-print('finish wait start connect')
+print('Droplet ready')
 
+print('[*] Connecting via SSH...', end='', flush=True)
 ssh = paramiko.SSHClient()
 ssh.load_system_host_keys()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -84,7 +87,7 @@ ip = newDroplet['networks']['v4'][0]['ip_address']
 path = os.path.expanduser('~')+'/.ssh/id_rsa_do'         
 ssh.connect(ip, username='root',key_filename=path)
 
-print('Connected to the server')
+print('CONNECTED')
 commands = [
         "apt-get update",
         "apt-get install -y apache2",
@@ -100,8 +103,13 @@ for command in commands:
   print(ssh_stdout.read().decode())
   
 ssh_stdin.close()
+continueQuestion = [
+  inquirer.Confirm('createWebsite', message="Do you want to create a website right now on your server?", default=True)
+]
 
-createWebsite(ip)
+answers = inquirer.prompt(continueQuestion)
+if(answers['createWebsite']):
+  createWebsite(ip)
 print(f"New machine is at IP: {ip}")
 webbrowser.open(f'http://{ip}')
 os.system(f"ssh -o StrictHostKeyChecking=no root@{ip}")

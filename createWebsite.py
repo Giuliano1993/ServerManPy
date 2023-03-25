@@ -1,6 +1,6 @@
 import inquirer
 import paramiko
-import dropletManager
+from scp import SCPClient, SCPException
 import os
 import utils
 
@@ -10,24 +10,6 @@ import utils
 #   website type [ static, wordpress, laravel ]
 #   empty or from git repositoty. IF FROM GIT
 #   ask for url, user, password [ can be asked or put in the env]
-
-''' 
-droplets = dropletManager.getDroplets()
-dropletsChoices = []
-for i, droplet in enumerate(droplets,start=1):
-  choice = f"[{i}] {droplet['name']}"
-  dropletsChoices.append(choice)
-  
-askDroplet = [ inquirer.List('dropletImage',
-                message="What OS do you prefer?",
-                choices=dropletsChoices,
-            )]
-chooseDroplet = inquirer.prompt(askDroplet)
-
-droplet = chooseDroplet['dropletImage']
-idChiusura = droplet.find(']')
-index = droplet[1:idChiusura]
-droplet = int(droplets[int(index)-1]['id']) '''
 
 def createWebsite(ip):
   questions = [
@@ -77,15 +59,44 @@ def createWebsite(ip):
   if(gitRepo):
     commands.append(f'cd /var/www/{folderName}; git clone https://{gitUser}:{gitToken}@github.com/{gitUser}/{repoName}.git .')
   else:
-    commands.append("touch index.html")
-    commands.append('echo -e "<h1>Hello World<h1>" >> index.html')
+    commands.append(f"touch /var/www/{folderName}/index.html")
+    commands.append(f'echo -e "<h1>Hello World<h1>" >> /var/www/{folderName}/index.html')
     
   
   
   for command in commands: 
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+    print( f"[Running] - {command}")
     print(ssh_stdout.read().decode())
     if(ssh_stderr):
       print(ssh_stderr.read().decode())
     
+    
+  try:
+    scpClient = SCPClient(ssh.get_transport())
+    confName = siteName.split(".")[0]+".conf"
+    scpClient.put('./confs/apache/defaultDomain.conf',remote_path=f'/etc/apache2/sites-available/{confName}')
+  except SCPException as e:
+    print(e)
+  except Exception as e:
+    print(e)
+    
+  enableSiteCommands = [
+    f"sed -i 's/SITEFOLDERNAME/{folderName}/g' /etc/apache2/sites-available/{confName}",
+    f'a2ensite {confName}',
+    'a2dissite 000-default.conf',
+    'apache2ctl configtest'
+  ]
+  
+  
+  for command in enableSiteCommands: 
+    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
+    print( f"[Running] - {command}")
+    print(ssh_stdout.read().decode())
+    if(ssh_stderr):
+      print(ssh_stderr.read().decode())
+      
+  if(ssh_stdout.read().decode().find('Syntax OK')):
+    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command('systemctl restart apache2')
+
   ssh_stdin.close()
