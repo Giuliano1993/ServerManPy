@@ -49,7 +49,11 @@ def getDistributions(distribution=""):
   return images
 
 
-
+def getSshKeys():
+  url = "https://api.digitalocean.com/v2/account/keys"
+  headers = buildBasicHeaders()
+  response = requests.get(url,headers=headers)
+  return response.json()['ssh_keys']
 
 def getSizes():
   url = "https://api.digitalocean.com/v2/sizes"
