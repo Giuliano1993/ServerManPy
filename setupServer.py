@@ -10,6 +10,7 @@ import webbrowser
 import dropletManager
 
 from createWebsite import createWebsite
+from utils import getConfig
 questions = [
   inquirer.Text('machineName', message="Pick a name for your machine"),  
 ]
@@ -84,7 +85,8 @@ ssh = paramiko.SSHClient()
 ssh.load_system_host_keys()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 ip = newDroplet['networks']['v4'][0]['ip_address']
-path = os.path.expanduser('~')+'/.ssh/id_rsa_do'         
+#path = os.path.expanduser('~')+'/.ssh/id_rsa_do'      
+path = getConfig('localKeyFile')
 ssh.connect(ip, username='root',key_filename=path)
 
 print('CONNECTED')

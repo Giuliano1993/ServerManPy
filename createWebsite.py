@@ -3,6 +3,7 @@ import paramiko
 from scp import SCPClient, SCPException
 import os
 import utils
+from utils import getConfig
 
 #ask for informations like:
 #   uri
@@ -38,18 +39,19 @@ def createWebsite(ip):
     if(gitToken == '' or gitToken is None):
       inquirer.Text('gitToken', message="type your git password here"),   
     answers = inquirer.prompt(questions)
-    repoName = answers['repoName'];
+    repoName = answers['repoName']
     
     if(gitUser == '' or gitUser is None): 
-      gitUser = answers['gitUser'];
+      gitUser = answers['gitUser']
     if(gitToken == '' or gitToken is None):
-      gitToken = answers['gitToken'];
+      gitToken = answers['gitToken']
   
   
   ssh = paramiko.SSHClient()
   ssh.load_system_host_keys()
   ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-  path = os.path.expanduser('~')+'/.ssh/id_rsa_do'         
+  #path = os.path.expanduser('~')+'/.ssh/id_rsa_do'
+  path = getConfig('localKeyFile')    
   ssh.connect(ip, username='root',key_filename=path)
 
   print('Connected to the server')
