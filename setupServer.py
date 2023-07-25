@@ -11,59 +11,38 @@ import dropletManager
 
 from createWebsite import createWebsite
 from utils import getConfig
-questions = [
-  inquirer.Text('machineName', message="Pick a name for your machine"),  
-]
 
-
-answers = inquirer.prompt(questions)
-machineName = answers['machineName']
 
 sizes = dropletManager.getSizes()
 
 sizeChoices = []
-for i,size in enumerate(sizes, start=1):
-  choice = f"[{i}] RAM: {size['memory']}MB, CPUs: {size['vcpus']}, disk: {size['disk']}GB"
+for i, size in enumerate(sizes):
+  choice = f"[{i+1}] RAM: {size['memory']}MB, CPUs: {size['vcpus']}, disk: {size['disk']}GB"
   sizeChoices.append(choice)
+# add again the filter for distribution later
+images = dropletManager.getDistributions()
+imageChoices = []
+for i,image in enumerate(images):
+  choice = f"[{i+1}] {image['description']}"
+  imageChoices.append(choice)
   
-questions = [ inquirer.List('dropletSize',
-                message="What size do you need?",
-                choices=sizeChoices,
-            )]
-answers = inquirer.prompt(questions)
-
-dropletSize = answers['dropletSize']
-idChiusura = dropletSize.find(']')
-index = dropletSize[1:idChiusura]
-
-dropletSize = sizes[int(index)-1]['slug']
-
 
 questions = [
-  inquirer.Text('dropletDistribution', message="Specify a distribution if you wish ( for example ubuntu, debian...)"),  
+  inquirer.Text('machineName', message="Pick a name for your machine"),  
+  inquirer.List('dropletSize', message="What size do you need?", choices=sizeChoices ),
+  inquirer.List('dropletImage', message="What OS do you prefer?", choices=imageChoices)
 ]
 
 answers = inquirer.prompt(questions)
 
-images = dropletManager.getDistributions(answers['dropletDistribution'])
-imageChoices = []
-for i,image in enumerate(images, start=1):
-  choice = f"[{i}] {image['description']}"
-  imageChoices.append(choice)
+machineName = answers['machineName']
   
-questions = [ inquirer.List('dropletImage',
-                message="What OS do you prefer?",
-                choices=imageChoices,
-            )]
-answers = inquirer.prompt(questions)
+index = sizeChoices.index(answers['dropletSize'])
+dropletSize = sizes[index]['slug']
 
+index = imageChoices.index(answers['dropletImage'])
+dropletImage = images[index]['id']
 
-
-dropletImage = answers['dropletImage']
-idChiusura = dropletImage.find(']')
-index = dropletImage[1:idChiusura]
-
-dropletImage = int(images[int(index)-1]['id'])
 
 newDroplet  = dropletManager.createDroplet(machineName,dropletSize,dropletImage)
 
