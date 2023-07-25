@@ -19,8 +19,8 @@ def createWebsite(ip):
     inquirer.Confirm('gitRepo', message="Do you want to use a git Repo?", default=True)
   ]
   answers = inquirer.prompt(questions)
-  siteName = answers['siteName']
-  folderName = answers['folderName'] if answers['folderName'] != '' else answers['siteName']
+  siteName = answers['siteName'].replace(' ','-')
+  folderName = answers['folderName'].replace(' ','-') if answers['folderName'] != '' else answers['siteName'].replace(' ','-')
   gitRepo = answers['gitRepo']
 
   print(siteName)
