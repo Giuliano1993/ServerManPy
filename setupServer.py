@@ -51,7 +51,7 @@ newDroplet = dropletManager.getDroplet(newDroplet['id'])
 print('[*] Creating the droplet... ', end='', flush=True)
 while newDroplet['status'] != 'active' :
   newDroplet = dropletManager.getDroplet(newDroplet['id'])
-  #print('.')
+  print('.', end='', flush=True)
   time.sleep(1)
   
 print('OK')
@@ -64,7 +64,6 @@ ssh = paramiko.SSHClient()
 ssh.load_system_host_keys()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 ip = newDroplet['networks']['v4'][0]['ip_address']
-#path = os.path.expanduser('~')+'/.ssh/id_rsa_do'      
 path = getConfig('localKeyFile')
 ssh.connect(ip, username='root',key_filename=path)
 
