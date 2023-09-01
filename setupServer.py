@@ -5,10 +5,12 @@ import inquirer
 import paramiko
 import time
 import webbrowser
+import socket
+import sys
 #myModules
 
 import dropletManager
-
+import utils
 from createWebsite import createWebsite
 questions = [
   inquirer.Text('machineName', message="Pick a name for your machine"),  
@@ -36,7 +38,6 @@ idChiusura = dropletSize.find(']')
 index = dropletSize[1:idChiusura]
 
 dropletSize = sizes[int(index)-1]['slug']
-
 
 questions = [
   inquirer.Text('dropletDistribution', message="Specify a distribution if you wish ( for example ubuntu, debian...)"),  
@@ -71,7 +72,6 @@ newDroplet = dropletManager.getDroplet(newDroplet['id'])
 print('[*] Creating the droplet... ', end='', flush=True)
 while newDroplet['status'] != 'active' :
   newDroplet = dropletManager.getDroplet(newDroplet['id'])
-  #print('.')
   time.sleep(1)
   
 print('OK')
@@ -80,13 +80,22 @@ time.sleep(60)
 print('Droplet ready')
 
 print('[*] Connecting via SSH...', end='', flush=True)
-ssh = paramiko.SSHClient()
-ssh.load_system_host_keys()
-ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 ip = newDroplet['networks']['v4'][0]['ip_address']
-path = os.path.expanduser('~')+'/.ssh/id_rsa_do'         
-ssh.connect(ip, username='root',key_filename=path)
-
+try:
+  ssh = utils.createSshConnection(ip)
+except paramiko.BadHostKeyException as e:
+  print('Server Host Key could not be verified')
+  sys.exit(1)
+except paramiko.AuthenticationException as e:
+  print('Authentication failed')
+  sys.exit(1)
+except socket.error as e:
+  print('Socket error: %s',e.message )
+  sys.exit(1)
+except Exception as e:
+  print(e.message)
+  sys.exit(1)
+  
 print('CONNECTED')
 commands = [
         "apt-get update",

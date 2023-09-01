@@ -3,7 +3,8 @@ import paramiko
 from scp import SCPClient, SCPException
 import os
 import utils
-
+import sys
+import socket
 #ask for informations like:
 #   uri
 #   folderName ( if different from uri ) 
@@ -45,13 +46,22 @@ def createWebsite(ip):
     if(gitToken == '' or gitToken is None):
       gitToken = answers['gitToken'];
   
-  
-  ssh = paramiko.SSHClient()
-  ssh.load_system_host_keys()
-  ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-  path = os.path.expanduser('~')+'/.ssh/id_rsa_do'         
-  ssh.connect(ip, username='root',key_filename=path)
-
+  try:
+    ssh = utils.createSshConnection(ip)
+  except paramiko.BadHostKeyException as e:
+    print('Server Host Key could not be verified')
+    sys.exit(1)
+  except paramiko.AuthenticationException as e:
+    print('Authentication failed')
+    sys.exit(1)
+  except socket.error as e:
+    print('Socket error: %s',e.message )
+    sys.exit(1)
+  except Exception as e:
+    print(e.message)
+    sys.exit(1)
+    
+    
   print('Connected to the server')
   commands = [
     f"cd /var/www; mkdir {folderName}; cd {folderName}; pwd",
