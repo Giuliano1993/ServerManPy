@@ -62,7 +62,7 @@ def createWebsite(ip):
     commands.append(f'cd /var/www/{folderName}; git clone https://{gitUser}:{gitToken}@github.com/{gitUser}/{repoName}.git .')
   else:
     commands.append(f"touch /var/www/{folderName}/index.html")
-    commands.append(f'echo -e "<h1>Hello World<h1>" >> /var/www/{folderName}/index.html')
+    commands.append(f'echo -e "<h1>Hello World {folderName}<h1>" >> /var/www/{folderName}/index.html')
     
   
   
