@@ -16,8 +16,9 @@ def createDroplet(name, size, image):
     'image':int(image),
     'ssh_keys': keys
   }
-  #print(data)
   response = requests.post(get_droplets_url, headers=headers,json=data)
+  
+  print(response.json())
   return response.json()['droplet']
 
 

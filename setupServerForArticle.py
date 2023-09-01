@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
+
+'''
+This is a simpler version off the setupServer.py script, for the article written on Dev.To
+'''
+
+
+
+
 # python modules
 import os
 import inquirer
 import paramiko
 import time
 import webbrowser
-import socket
-import sys
-#myModules
 
+#myModules
 import dropletManager
-import utils
-from createWebsite import createWebsite
 from utils import getConfig
 
 
@@ -21,12 +25,13 @@ sizeChoices = []
 for i, size in enumerate(sizes):
   choice = f"[{i+1}] RAM: {size['memory']}MB, CPUs: {size['vcpus']}, disk: {size['disk']}GB"
   sizeChoices.append(choice)
-# add again the filter for distribution later
+
 images = dropletManager.getDistributions()
 imageChoices = []
 for i,image in enumerate(images):
   choice = f"[{i+1}] {image['description']}"
   imageChoices.append(choice)
+  
 
 questions = [
   inquirer.Text('machineName', message="Pick a name for your machine"),  
@@ -44,7 +49,6 @@ dropletSize = sizes[index]['slug']
 index = imageChoices.index(answers['dropletImage'])
 dropletImage = images[index]['id']
 
-
 newDroplet  = dropletManager.createDroplet(machineName,dropletSize,dropletImage)
 
 
@@ -52,7 +56,6 @@ newDroplet = dropletManager.getDroplet(newDroplet['id'])
 print('[*] Creating the droplet... ', end='', flush=True)
 while newDroplet['status'] != 'active' :
   newDroplet = dropletManager.getDroplet(newDroplet['id'])
-  print('.', end='', flush=True)
   time.sleep(1)
   
 print('OK')
@@ -61,46 +64,25 @@ time.sleep(60)
 print('Droplet ready')
 
 print('[*] Connecting via SSH...', end='', flush=True)
+ssh = paramiko.SSHClient()
+ssh.load_system_host_keys()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 ip = newDroplet['networks']['v4'][0]['ip_address']
-
-try:
-  ssh = utils.createSshConnection(ip)
-except paramiko.BadHostKeyException as e:
-  print('Server Host Key could not be verified')
-  sys.exit(1)
-except paramiko.AuthenticationException as e:
-  print('Authentication failed')
-  sys.exit(1)
-except socket.error as e:
-  print('Socket error: %s',e.message )
-  sys.exit(1)
-except Exception as e:
-  print(e.message)
-  sys.exit(1)
+path = getConfig('localKeyFile')
+ssh.connect(ip, username='root',key_filename=path)
 
 print('CONNECTED')
 commands = [
         "apt-get update",
         "apt-get install -y apache2",
-        "apt-get install -y php libapache2-mod-php",
-        "systemctl restart apache2",
-        "php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\"",
-        "php composer-setup.php --install-dir=/usr/local/bin --filename=composer",
-        "php -r \"unlink('composer-setup.php');\""
-        "apt-get install -y git",
+        # add all the commands you'd like to exec
     ]
 for command in commands: 
   ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(command)
   print(ssh_stdout.read().decode())
   
 ssh_stdin.close()
-continueQuestion = [
-  inquirer.Confirm('createWebsite', message="Do you want to create a website right now on your server?", default=True)
-]
 
-answers = inquirer.prompt(continueQuestion)
-if(answers['createWebsite']):
-  createWebsite(ip)
 print(f"New machine is at IP: {ip}")
 webbrowser.open(f'http://{ip}')
 os.system(f"ssh -o StrictHostKeyChecking=no root@{ip}")

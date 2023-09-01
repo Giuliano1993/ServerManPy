@@ -5,6 +5,7 @@ import os
 import utils
 import sys
 import socket
+
 #ask for informations like:
 #   uri
 #   folderName ( if different from uri ) 
@@ -19,8 +20,8 @@ def createWebsite(ip):
     inquirer.Confirm('gitRepo', message="Do you want to use a git Repo?", default=True)
   ]
   answers = inquirer.prompt(questions)
-  siteName = answers['siteName']
-  folderName = answers['folderName'] if answers['folderName'] != '' else answers['siteName']
+  siteName = answers['siteName'].replace(' ','-')
+  folderName = answers['folderName'].replace(' ','-') if answers['folderName'] != '' else answers['siteName'].replace(' ','-')
   gitRepo = answers['gitRepo']
 
   print(siteName)
@@ -39,12 +40,12 @@ def createWebsite(ip):
     if(gitToken == '' or gitToken is None):
       inquirer.Text('gitToken', message="type your git password here"),   
     answers = inquirer.prompt(questions)
-    repoName = answers['repoName'];
+    repoName = answers['repoName']
     
     if(gitUser == '' or gitUser is None): 
-      gitUser = answers['gitUser'];
+      gitUser = answers['gitUser']
     if(gitToken == '' or gitToken is None):
-      gitToken = answers['gitToken'];
+      gitToken = answers['gitToken']
   
   try:
     ssh = utils.createSshConnection(ip)
@@ -70,7 +71,7 @@ def createWebsite(ip):
     commands.append(f'cd /var/www/{folderName}; git clone https://{gitUser}:{gitToken}@github.com/{gitUser}/{repoName}.git .')
   else:
     commands.append(f"touch /var/www/{folderName}/index.html")
-    commands.append(f'echo -e "<h1>Hello World<h1>" >> /var/www/{folderName}/index.html')
+    commands.append(f'echo -e "<h1>Hello World {folderName}<h1>" >> /var/www/{folderName}/index.html')
     
   
   
