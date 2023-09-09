@@ -1,5 +1,6 @@
 # ServerManPy
-## Previously doManager
+![image](./entryScreenshot.png)
+
 This is a tool born to easily manage servers on digital ocean platform but is on the road to become a command line tool to manage your server and website across multiple platforms.
 While this is going to be open source, I'm also building a graphic interface version of this that I'll release asap.
 
