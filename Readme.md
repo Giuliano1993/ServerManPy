@@ -1,7 +1,11 @@
-# doManager
-This repo will contain some scripts to easily create, run and manage your server on digital ocean.
-Will create a running server for your webapp in just few steps from your local terminal, make it easy for you to go over some repetetive tasks
+# ServerManPy
+## Previously doManager
+This is a tool born to easily manage servers on digital ocean platform but is on the road to become a command line tool to manage your server and website across multiple platforms.
+While this is going to be open source, I'm also building a graphic interface version of this that I'll release asap.
 
+As for its story at the moment this contains mostly Digital Ocean functionalities, but you are welcome to add your part to make this a complete Server Manager
+
+Actually working on completing some Digital Ocean functionalities and adding connection for Netlify and Vercel
 ### Basic code explanation
 The code from the file setupServer.py is explained in an article on [this link](https://dev.to/giuliano1993/api-ssh-create-and-setup-a-server-with-python-and-digital-ocean-58e2)
 

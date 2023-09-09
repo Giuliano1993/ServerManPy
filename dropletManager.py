@@ -1,6 +1,5 @@
 import requests
-from utils import buildBasicHeaders, printFormattedInfo, getConfig
-from colorama import Style
+from utils import buildBasicHeaders, getConfig
 import yaml
 
 #print(response.json())
