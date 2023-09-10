@@ -20,24 +20,18 @@ console.print("https://www.buymeacoffee.com/ghostylab", style="bold")
 console.print(mdLine)
 
 
-availableCommands = [
-    'Create Server',
-    'Connect to server with SSH',
-    'Setup Website on a server',
-    'Exit'
-]
+console.print("What platform want to use?")
 
-
-question = [inquirer.List('command',message="What would you like to do?", choices=availableCommands)]
+platforms = ["Digital Ocean","Netlify","Vercel","Exit"]
+question = [inquirer.List('command',message="What would you like to do?", choices=platforms)]
 answers = inquirer.prompt(question)
-commandIndex = availableCommands.index(answers['command'])
+commandIndex = platforms.index(answers['command'])
 
-match commandIndex:
-    case 0:
-        subprocess.run(["python","setupServer.py"])
-    case 1:
-        subprocess.run(["python","connectToServer.py"])
-    case 2:
-        subprocess.run(["python","addWebsite.py"])
-    case 3:
-        exit()
+if(answers['command'] == 'Exit'):exit()
+spacecleanPlatform = answers['command'].replace(" ","")
+folder = spacecleanPlatform[0].lower() + spacecleanPlatform[1:]
+commandListPath = './platforms/'+folder+'/commands.py'
+subprocess.run(["python", commandListPath])
+
+
+
