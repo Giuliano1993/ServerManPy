@@ -33,11 +33,3 @@ You can get one by going [here](https://github.com/settings/tokens), or guided s
 8. give it a name and copy your new token
 
 
-#### Todos
-
-- [ add ] delete droplet
-- [ add ] remove website
-- [ complete ] add website
-  - can pick a configuration for a site
-  - define a pipeline for the uploaded website
-
