@@ -8,17 +8,22 @@ NETLIFY_USER = utils.getConfig('netlifyUser')
 BASE_NETLIFY_ENDOPOINT = "https://api.netlify.com"
 
 def getDeployKey():
-    response = requests.post(
-        url= BASE_NETLIFY_ENDOPOINT+"/api/v1/deploy_keys",
-        headers={
-            "content-type": "application/json",
-            "Authorization": "Bearer "+NETLIFY_TOKEN
-        },
-        
-    )
+    response = netlifyRequest("/api/v1/deploy_keys")
+    
     if(response.ok):
         return response.json()['public_key']
     else:
         return response.raise_for_status()
     
 
+def netlifyRequest(url, contentType="application/json",json={}):
+    reqUrl = BASE_NETLIFY_ENDOPOINT + url
+    response = requests.post(
+        url=reqUrl,
+        headers={
+            "content-type": contentType,
+            "Authorization": "Bearer "+NETLIFY_TOKEN
+        },
+        json=json
+    )
+    return response

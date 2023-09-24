@@ -14,14 +14,7 @@ token = netlifyUtils.NETLIFY_TOKEN
 user = netlifyUtils.NETLIFY_USER
 sitename = str(time.time())+"site"
 payload = {"name":sitename,"subdomain":sitename}
-response = requests.post(
-    url= netlifyUtils.BASE_NETLIFY_ENDOPOINT + f'/api/v1/{user}/sites',
-    headers={
-        "content-type": "application/json",
-        "Authorization": "Bearer "+token
-    },
-    json=payload
-)
+response = netlifyUtils.netlifyRequest(f'/api/v1/{user}/sites', json=payload)
 
 if(response.ok):
     print("New server was correctly created")
