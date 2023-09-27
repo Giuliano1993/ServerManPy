@@ -10,8 +10,14 @@ import utils
 from gitScripts import repoList
 
 
-    
-
+#https://answers.netlify.com/t/deploy-the-github-repo-using-api/24269/13    
+#check the bottom line here can find some usegful insight of how get this going, maybe
+#keep tryingbebtter and more focused
+#https://docs.github.com/en/rest/deploy-keys/deploy-keys?apiVersion=2022-11-28#about-deploy-keys
+#https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys
+# bash script that generates deploy key
+#https://gist.github.com/noah/3ed929858802a474eeff888c9d3a2ac9
+dk = utils.getConfig("testDeployKey")
 token = netlifyUtils.NETLIFY_TOKEN
 user = netlifyUtils.NETLIFY_USER
 sitename = str(time.time())+"site"
