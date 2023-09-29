@@ -3,7 +3,7 @@ import sys
 sys.path.append("")
 import utils
 
-def getDeployKey(repo):
+def createDeployKey(repo):
     user = utils.getConfig("gitUser")
     gitToken = utils.getConfig('gitToken')
     url = f"https://api.github.com/repos/{user}/{repo}/keys"
@@ -21,4 +21,20 @@ def getDeployKey(repo):
         json=payload
     )
 
+    return response.json()
+
+
+def getDeployKeys(repo):
+    user = utils.getConfig("gitUser")
+    gitToken = utils.getConfig('gitToken')
+    url = f"https://api.github.com/repos/{user}/{repo}/keys"
+
+    response = requests.get(
+        url=url,
+        headers={
+            "Accept":"application/vnd.github+json",
+            "Authorization": f"Bearer {gitToken}",
+            "X-GitHub-Api-Version": "2022-11-28"
+        },
+    )
     return response.json()
