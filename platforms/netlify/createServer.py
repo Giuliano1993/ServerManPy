@@ -7,7 +7,7 @@ import sys
 sys.path.append("")		# fixes import issues
 
 import utils
-from gitScripts import repoList
+from gitScripts import repoList, getDeployKey
 
 
 #https://answers.netlify.com/t/deploy-the-github-repo-using-api/24269/13    
@@ -18,6 +18,10 @@ from gitScripts import repoList
 # bash script that generates deploy key
 #https://gist.github.com/noah/3ed929858802a474eeff888c9d3a2ac9
 dk = utils.getConfig("testDeployKey")
+installationId = utils.getConfig("githubTestInstallationId")
+
+
+
 token = netlifyUtils.NETLIFY_TOKEN
 user = netlifyUtils.NETLIFY_USER
 sitename = str(time.time())+"site"
@@ -43,16 +47,21 @@ if(linkRepo == 'Yes'):
     index = repoChoices.index(answers['pickRepo'])
     repo = repos[index]
     pk = netlifyUtils.getDeployKey()
+    depKey = getDeployKey.getDeployKeys(repo['name'])
+    
     payload['repo'] = {
         "branch": repo['default_branch'],
         "cmd": "npm run build",
-        "deploy_key_id": pk,
-        "dir": "build/",
+        "deploy_key_id": depKey[0]['id'],
+        "dir": "dist/",
         "private": False,
         "provider": "github",
         "repo": repo['full_name'],
-        "repo_id": repo['id']
+        "repo_id": repo['id'],
+        "installation_id": installationId
     }
+    payload["build_settings"] = payload['repo']
+
 response = netlifyUtils.netlifyRequest(f'/api/v1/{user}/sites', json=payload)
 
 if(response.ok):
@@ -60,4 +69,4 @@ if(response.ok):
     print("New server ID = " + response.json()['id'])
 else:
     print("There was an error:")
-    print(response.status_code + " : " + response.reason)
+    print(str(response.status_code) + " : " + response.reason)
