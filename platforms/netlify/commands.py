@@ -4,7 +4,7 @@ import subprocess
 
 commands = [
     "Create Site",
-    "Test Create Deploy",
+    "List Sites",
     "Back",
     "Exit"
 ]
@@ -18,7 +18,7 @@ match commandIndex:
     case 0:
         subprocess.run(["python","./platforms/netlify/createServer.py"])
     case 1:
-        subprocess.run(["python","./platforms/netlify/createDeploy.py"])
+        subprocess.run(["python","./platforms/netlify/listSites.py"])
     case 2:
         subprocess.run(['python',"serverMan.py"])
     case 3:

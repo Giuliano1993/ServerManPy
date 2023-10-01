@@ -17,7 +17,10 @@ from gitScripts import repoList, getDeployKey
 #https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys
 # bash script that generates deploy key
 #https://gist.github.com/noah/3ed929858802a474eeff888c9d3a2ac9
-dk = utils.getConfig("testDeployKey")
+
+#this was the final thing missing: you need the netlify installation id 
+#https://answers.netlify.com/t/unable-to-deploy-a-private-repo-using-the-api/81869/9
+
 installationId = utils.getConfig("githubTestInstallationId")
 
 
@@ -70,3 +73,4 @@ if(response.ok):
 else:
     print("There was an error:")
     print(str(response.status_code) + " : " + response.reason)
+    print(response.json())

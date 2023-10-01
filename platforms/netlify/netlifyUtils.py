@@ -16,9 +16,10 @@ def getDeployKey():
         return response.raise_for_status()
     
 
-def netlifyRequest(url, contentType="application/json",json={}):
+def netlifyRequest(url, contentType="application/json",json={},method="POST"):
     reqUrl = BASE_NETLIFY_ENDOPOINT + url
-    response = requests.post(
+    response = requests.request(
+        method,
         url=reqUrl,
         headers={
             "content-type": contentType,
