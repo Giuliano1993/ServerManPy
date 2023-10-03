@@ -15,7 +15,7 @@ def createDeployKey(repo):
     
     home_dir = os.path.expanduser("~")
     ssh_dir = os.path.join(home_dir, ".ssh")
-    print(ssh_dir)
+    print("insert a name for your key")
     name = input()
     keyNamePath = ssh_dir + "\git_generated_" + name
 

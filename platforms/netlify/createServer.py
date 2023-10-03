@@ -10,6 +10,21 @@ import utils
 from gitScripts import repoList, getDeployKey
 
 
+
+
+def chooseRepo():
+    repos = repoList.repoList()
+    
+    repoChoices = []
+    for i, repo in enumerate(repos):
+        choice = repo['full_name']
+        repoChoices.append(choice)
+
+    chooseRepo = [inquirer.List('pickRepo', message="choose a repo you want to link to the site", choices=repoChoices)]
+    answers = inquirer.prompt(chooseRepo)
+    index = repoChoices.index(answers['pickRepo'])
+    return repos[index]
+
 #https://answers.netlify.com/t/deploy-the-github-repo-using-api/24269/13    
 #check the bottom line here can find some usegful insight of how get this going, maybe
 #keep tryingbebtter and more focused
@@ -38,24 +53,17 @@ connectRepo = [inquirer.List('connectRepo', message="Do you want to link a repo 
 linkRepo = inquirer.prompt(connectRepo)['connectRepo']
 
 if(linkRepo == 'Yes'):
-    repos = repoList.repoList()
-    
-    repoChoices = []
-    for i, repo in enumerate(repos):
-        choice = repo['full_name']
-        repoChoices.append(choice)
-
-    chooseRepo = [inquirer.List('pickRepo', message="choose a repo you want to link to the site", choices=repoChoices)]
-    answers = inquirer.prompt(chooseRepo)
-    index = repoChoices.index(answers['pickRepo'])
-    repo = repos[index]
+    repo = chooseRepo()
     pk = netlifyUtils.getDeployKey()
     depKey = getDeployKey.getDeployKeys(repo['name'])
-    
+    if(len(depKey) == 0):
+        depKey = getDeployKey.createDeployKey(repo['name'])
+    else:
+        depKey = depKey[0] 
     payload['repo'] = {
         "branch": repo['default_branch'],
         "cmd": "npm run build",
-        "deploy_key_id": depKey[0]['id'],
+        "deploy_key_id": depKey['id'],
         "dir": "dist/",
         "private": False,
         "provider": "github",
@@ -74,3 +82,4 @@ else:
     print("There was an error:")
     print(str(response.status_code) + " : " + response.reason)
     print(response.json())
+
